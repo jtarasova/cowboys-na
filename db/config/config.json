@@ -1,0 +1,28 @@
+{
+  "development": {
+    "username": "bob",
+    "password": 123,
+    "database": "cva",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "idnprizlhdiawp",
+    "password": "ab890ac1ad043e5f47ac0b0a0e08c83fbc578c26a39cf762193566f029e02116",
+    "database": "daqoqduherol2j",
+    "host": "ec2-54-155-61-133.eu-west-1.compute.amazonaws.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
+  }
+}
