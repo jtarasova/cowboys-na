@@ -32,6 +32,7 @@ router.post('/signin', async (req, res) => {
     // В идеале, нужно написать пользователю, что логин/пароль - неверен.
     return res.redirect('/signUp');
   }
+  req.session.userType = currUser.type;
   req.session.userId = currUser.id;
   req.session.userEmail = currUser.email;
 
