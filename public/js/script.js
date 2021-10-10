@@ -13,36 +13,37 @@ const createMessage = (author, text) => {
   return $oneMessage;
 };
 
-// socket.onopen = f
-socket.onmessage = function (message) {
-  const parsed = JSON.parse(message.data);
-  switch (parsed.type) {
-    case 'NEW_MESSAGE':
-      // eslint-disable-next-line no-case-declarations
-      //   console.log('new message');
-      const $newMessage = createMessage(
-        parsed.payload.name,
-        parsed.payload.message
+socket.onopen = function (e) {
+  socket.onmessage = function (message) {
+    const parsed = JSON.parse(message.data);
+    switch (parsed.type) {
+      case 'NEW_MESSAGE':
+        // eslint-disable-next-line no-case-declarations
+        //   console.log('new message');
+        const $newMessage = createMessage(
+          parsed.payload.name,
+          parsed.payload.message
+        );
+        $chatik.append($newMessage);
+        return console.log('new message', parsed);
+      default:
+        break;
+    }
+  };
+
+  $chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = $chatForm.text.value;
+    console.log(message);
+    if (message) {
+      socket.send(
+        JSON.stringify({
+          type: 'NEW_MESSAGE',
+          payload: message,
+        })
       );
-      $chatik.append($newMessage);
-      return console.log('new message', parsed);
-    default:
-      break;
-  }
+
+      $chatForm.reset();
+    }
+  });
 };
-
-$chatForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const message = $chatForm.text.value;
-  console.log(message);
-  if (message) {
-    socket.send(
-      JSON.stringify({
-        type: 'NEW_MESSAGE',
-        payload: message,
-      })
-    );
-
-    $chatForm.reset();
-  }
-});
