@@ -1,29 +1,20 @@
 const express = require('express');
-// const captain = require('morgan'); //TODO:
 const path = require('path');
 const hbs = require('hbs');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-require('dotenv').config(); // TODO:
-// const redis = require('redis');
-// const RedisStore = require('connect-redis')(session);
+require('dotenv').config();
 const indexRouter = require('./src/routes/indexRouter');
 const chatRouter = require('./src/routes/chatRouter');
 
-// const redisClient = redis.createClient();
-
 const app = express();
-const PORT = process.env.PORT ?? 3000; // nullish operator
-// app.set('trust proxy', true);
-app.enable('trust proxy'); // TODO:
+app.enable('trust proxy');
 app.set('view engine', 'hbs');
 app.set('views', path.join(process.env.PWD, 'src', 'views/'));
 
-// console.log(path.join(process.env.PWD, 'src', 'views'));
-
 hbs.registerPartials(path.join(process.env.PWD, 'src', 'views', 'partials'));
 
-// app.use(captain('dev'));
+app.use(express.static(path.join(process.env.PWD, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -42,7 +33,9 @@ const sessionConfig = {
     // sameSite: 'none',
   },
 };
-app.use(session(sessionConfig));
+
+const sessionParser = session(sessionConfig);
+app.use(sessionParser);
 
 app.use((req, res, next) => {
   res.locals.userId = req.session?.userId;
@@ -54,4 +47,6 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/chat', chatRouter);
 
-app.listen(PORT, () => console.log('Dobro'));
+// app.listen(PORT, () => console.log('Dobro'));
+
+module.exports = { app, sessionParser };
