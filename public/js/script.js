@@ -31,8 +31,8 @@ socket.onopen = function (e) {
     }
   };
 
-  $chatForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  $chatForm.addEventListener('submit', (event) => {
+    event.preventDefault();
     const message = $chatForm.text.value;
     console.log(message);
     if (message) {
