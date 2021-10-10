@@ -1,6 +1,7 @@
 // console.log('hello');
 
 const socket = new WebSocket('ws://localhost:3000');
+// const socket = new WebSocket(window.location.origin.replace('http', 'ws')); // before deploy
 
 const $chatForm = document.forms.chat;
 const $chatik = document.querySelector('.chatik');
