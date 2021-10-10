@@ -4,23 +4,24 @@ const path = require('path');
 const hbs = require('hbs');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-require('dotenv').config(); //TODO:
+require('dotenv').config(); // TODO:
 // const redis = require('redis');
 // const RedisStore = require('connect-redis')(session);
 const indexRouter = require('./src/routes/indexRouter');
+const chatRouter = require('./src/routes/chatRouter');
 
 // const redisClient = redis.createClient();
 
 const app = express();
 const PORT = process.env.PORT ?? 3000; // nullish operator
 // app.set('trust proxy', true);
-app.enable('trust proxy'); //TODO:
+app.enable('trust proxy'); // TODO:
 app.set('view engine', 'hbs');
-// app.set('views', path.join(__dirname, 'src', 'views/'));
+app.set('views', path.join(process.env.PWD, 'src', 'views/'));
 
 // console.log(path.join(process.env.PWD, 'src', 'views'));
 
-hbs.registerPartials(path.join(process.env.PWD, 'views', 'partials'));
+hbs.registerPartials(path.join(process.env.PWD, 'src', 'views', 'partials'));
 
 // app.use(captain('dev'));
 app.use(express.urlencoded({ extended: true }));
@@ -46,9 +47,11 @@ app.use(session(sessionConfig));
 app.use((req, res, next) => {
   res.locals.userId = req.session?.userId;
   res.locals.userEmail = req.session?.userEmail;
+  res.locals.userName = req.session?.userName;
   next();
 });
 
 app.use('/', indexRouter);
+app.use('/chat', chatRouter);
 
 app.listen(PORT, () => console.log('Dobro'));

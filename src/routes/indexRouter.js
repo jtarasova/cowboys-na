@@ -16,27 +16,42 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/signUp', async (req, res) => {
-  const { email, password: pass, type } = req.body;
+  const { name, email, password: pass, type } = req.body;
   const saltRounds = 10;
   const password = await bcrypt.hash(pass, saltRounds);
-  const currUser = await User.create({ email, type, password });
-  req.session.userId = currUser.id;
-  req.session.userType = currUser.type;
-  req.session.userEmail = currUser.email;
-  res.redirect('/');
+  try {
+    const currUser = await User.create({
+      name,
+      email,
+      type,
+      password,
+    });
+    req.session.userId = currUser.id;
+    req.session.userType = currUser.type;
+    req.session.userEmail = currUser.email;
+    req.session.userName = currUser.name;
+    res.redirect('/');
+  } catch (err) {
+    res.render('error', { message: 'Username or Email is not unique' });
+  }
 });
 router.post('/signin', async (req, res) => {
   const { email, password } = req.body;
-  const currUser = await User.findOne({ where: { email } });
-  if (!currUser || !(await bcrypt.compare(password, currUser?.password))) {
-    // В идеале, нужно написать пользователю, что логин/пароль - неверен.
-    return res.redirect('/signUp');
-  }
-  req.session.userType = currUser.type;
-  req.session.userId = currUser.id;
-  req.session.userEmail = currUser.email;
+  try {
+    const currUser = await User.findOne({ where: { email } });
+    if (!currUser || !(await bcrypt.compare(password, currUser?.password))) {
+      // В идеале, нужно написать пользователю, что логин/пароль - неверен.
+      return res.render('error', { message: 'Wrong user or password' });
+    }
+    req.session.userType = currUser.type;
+    req.session.userId = currUser.id;
+    req.session.userEmail = currUser.email;
+    req.session.userName = currUser.name;
 
-  res.redirect('/');
+    res.redirect('/');
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.get('/cowboys', cowboyCheck, (req, res) => {
